@@ -2,6 +2,9 @@ class BaseConfig(object):
     def __init__(self):
 
         # 注意train_data/train_epoch/batch_size 和 test_data/test_epoch/batch_sizes要整除
+        self.step = 4
+        self.hidden_size = 256
+        
         self.train_way = 5
         self.train_shot = 1
         self.train_query = 1

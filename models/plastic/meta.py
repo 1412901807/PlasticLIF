@@ -139,23 +139,26 @@ class PlasticModule(nn.Module):
 		lr = lr - lr * (1 - max_norm / norm) * (norm > max_norm)
 
 		lrs = [lr, ]
-		# wds = [wd, ]
+		wds = [wd, ]
 		# 增加两个维度
 		for d in range(2):
 			lrs.append(lrs[-1].unsqueeze(-1))
-			# wds.append(wds[-1].unsqueeze(-1))
+			wds.append(wds[-1].unsqueeze(-1))
 
-		# # 1
-		# new_param_list = []
-		# for grad, param in zip(grads, params):
-		# 	new_param = (1 - lrs[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
-		# 	new_param_list.append(new_param)
-		
-		# 2
+		# 1
 		new_param_list = []
 		for grad, param in zip(grads, params):
 			new_param = (1 - lrs[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
 			new_param_list.append(new_param)
+		# print("111111111111111111111111111111111111111")
+		
+		
+		# # 2
+		# new_param_list = []
+		# for grad, param in zip(grads, params):
+		# 	new_param = (1 - wds[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
+		# 	new_param_list.append(new_param)
+		# # print("22222222222222222222222222222222222222222")
 
 		new_param = torch.cat([param.view(param.shape[0], -1) for param in new_param_list], dim=1)
 		return new_param

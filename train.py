@@ -98,6 +98,16 @@ def model_eval(config, net, test_data, task_func, logger=None):
 
         return avg_testloss, test_acc
 
+
+def count_model_params(model):
+    """
+    计算模型的总参数量
+    :param model: PyTorch 模型实例
+    :return: 模型的总参数量
+    """
+    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    return total_params
+
 def model_train(config):
     np.random.seed(NP_SEED + config.seed)
     torch.cuda.manual_seed_all(TCHCUDA_SEED + config.seed)
@@ -108,6 +118,10 @@ def model_train(config):
 
     # initialize network
     net = model_init(config, mode='train')
+
+    # 打印网络参数总量
+    total_params = count_model_params(net)
+    print(f"网络的总参数量: {total_params}")
 
     # 初始化 logger
     # 初始化 logger
@@ -266,6 +280,26 @@ def save_config(config, output_path):
     with open(output_path, 'w') as f:
         json.dump(config_dict, f, indent=4)
 
+def resize_hidden(config):
+   
+    scale_factors = {
+        "LIF_LSTM": {"none": 1.5},
+        "LIF_RNN": {"stdp": 1.9, "hebbian": 1.9, "none": 2.5},
+        "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+        "LSTM": {"none": 1.5},
+        "RNN": {"stdp": 1.7, "hebbian": 1.7, "none": 2.5},
+        "MLP": {"stdp": 1.7, "hebbian": 1.7, "none": 2.5},
+    }
+
+    rnn_type = config.rnn
+    plasticity = config.plasticity_mode
+    factor = scale_factors.get(rnn_type, {}).get(plasticity, 1)
+
+    # 更新 hidden_size
+    config.hidden_size = int(config.hidden_size * factor)
+
+    return config
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train model with a custom config file.")
     parser.add_argument('--config_path', type=str, help="Path to the config.py file.")
@@ -274,6 +308,10 @@ if __name__ == "__main__":
 
     # 加载指定路径的配置文件
     config = load_config(args.config_path)
+
+    # 调整hidden_size
+    config = resize_hidden(config)
+
     # 保存配置
     save_config(config, "./config.json")
 
