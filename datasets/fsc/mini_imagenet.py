@@ -98,10 +98,6 @@ class MiniImageNet(data.Dataset):
                 # accuracy on the novel categories.
                 data_novel = load_data(file_val_categories_val_phase)
 
-            
-            print(data_base['data'].shape)
-            print(data_novel['data'].shape)
-
             self.data = np.concatenate(
                 [data_base['data'], data_novel['data']], axis=0)
             self.labels = data_base['labels'] + data_novel['labels']

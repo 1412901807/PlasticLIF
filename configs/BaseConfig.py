@@ -21,6 +21,7 @@ class BaseConfig(object):
         self.p_wd = 0.1
         self.inner_grad_clip = 1
         self.layernorm = False
+        self.weight_clip = None
         self.grad_clip = 5
         self.label_smoothing = 0
         self.perform_val = True
@@ -28,7 +29,19 @@ class BaseConfig(object):
         self.optimizer_type = 'AdamW'
         self.use_lr_scheduler = True
         self.scheduler_type = 'CosineAnnealing'
-        
+        self.model_type = 'Plasticmodel'
+
+class OmniglotConfig(BaseConfig):
+    def __init__(self):
+        super().__init__()
+        self.image_dataset = 'Omniglot'
+        self.input_shape = [1, 105, 105]
+
+class miniImageNetConfig(BaseConfig):
+    def __init__(self):
+        super().__init__()
+        self.image_dataset = 'miniImageNet'
+        self.input_shape = [3, 84, 84]
 
         
 

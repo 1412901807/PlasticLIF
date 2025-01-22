@@ -41,7 +41,6 @@ class PlasticLinearmodel(models.PlasticModule):
 
         self.plasticity_mode = config.plasticity_mode
         self.dim = self.get_param_dim()
-        # print(self.dim)
         self.hidden_size = config.hidden_size
         self.out_dim = config.model_outsize
         self.modulation = config.modulation
@@ -49,6 +48,7 @@ class PlasticLinearmodel(models.PlasticModule):
         self.lr = config.p_lr
         self.wd = config.p_wd
         self.grad_clip = config.inner_grad_clip
+        self.weight_clip = config.weight_clip
         
         self.use_layernorm = config.layernorm
         if self.use_layernorm:
@@ -73,18 +73,19 @@ class PlasticLinearmodel(models.PlasticModule):
             embedding = self.proj(tmp)
             embedding = torch.cat((embedding, extra_input), dim=1)
 
-            if self.rnn_type == 'LSTM':
+            if self.rnn_type == 'LSTM' or self.rnn_type == 'LIF_LSTM':
                 x, h = self.rnn(embedding, (hidden[:, self.dim: -self.hidden_size], hidden[:, -self.hidden_size: ]))
                 if self.use_layernorm:
                     x = self.layernorm(x)
                 h = torch.cat((x, h), dim=1)
                 x = self.out_fc(x)
-            elif self.rnn_type == 'RNN' or self.rnn_type == 'MLP':
+            elif self.rnn_type == 'RNN' or self.rnn_type == 'MLP' or self.rnn_type == 'LIF_RNN' or self.rnn_type == 'LIF_MLP':
                 h = self.rnn(embedding, hidden[:, self.dim: ])
                 if self.use_layernorm:
                     h = self.layernorm(h)
                 x = self.out_fc(h)
 
+            # 创建与 x 的最后一列具有相同形状的张量，并用 self.lr 和 self.wd 的值填充它们。
             lr = torch.full_like(x[:, -1], self.lr)
             wd = torch.full_like(x[:, -1], self.wd)
 
@@ -95,7 +96,8 @@ class PlasticLinearmodel(models.PlasticModule):
             # update the plastic weights, if there are any
             if self.dim > 0:
                 floatparam = self.update_floatparam(lr, wd, self.grad_clip, mode=self.plasticity_mode)
-
+                if self.weight_clip is not None:
+                    floatparam = torch.clip(floatparam, -self.weight_clip, self.weight_clip)
                 h = torch.cat([floatparam, h], dim=1)
             #
             hidden = h
@@ -105,7 +107,7 @@ class PlasticLinearmodel(models.PlasticModule):
 
     @property
     def memory_size(self): 
-        return self.dim + self.hidden_size * (1 + (self.rnn_type == 'LSTM'))
+        return self.dim + self.hidden_size * (1 + (self.rnn_type == 'LSTM' or self.rnn_type == 'LIF_LSTM'))
     
     def reset_LIF(self):
         # 调用cnn和rnn的reset函数

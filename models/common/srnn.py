@@ -26,7 +26,7 @@ class SNN_MLPCell(nn.Module):
         super().__init__()
         self.i_fc = Linear(ind, outd)
         self.h_fc = Linear(outd, outd)
-        self.LIF = nn.ModuleList(LIFNode(threshold=0.3, step=step) for _ in range(2))
+        self.LIF = nn.ModuleList(LIFNode(threshold=0.3) for _ in range(2))
 
     def reset_LIF(self):
         for lif in self.LIF:
@@ -80,7 +80,7 @@ class SNN_RNNCell(nn.Module):
         super().__init__()
         self.i_fc = Linear(ind, outd)
         self.h_fc = Linear(outd, outd)
-        self.LIF = LIFNode(threshold=0.3, step=step)
+        self.LIF = LIFNode(threshold=0.3)
 
     def calc_dw(self, fc, pre, post):
         pass
@@ -133,7 +133,7 @@ class SNN_LSTMCell(nn.Module):
         self.scale = 2
         self.h_fc = Linear(outd, outd * 4, scale=self.scale)
         self.i_fc = Linear(ind, outd * 4, scale=self.scale)
-        self.LIF = nn.ModuleList(LIFNode(threshold=0.3, step=step) for _ in range(5))
+        self.LIF = nn.ModuleList(LIFNode(threshold=0.3) for _ in range(5))
 
     def reset_LIF(self):
         for lif in self.LIF:

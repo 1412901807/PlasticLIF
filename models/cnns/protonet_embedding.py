@@ -23,7 +23,7 @@ class SNN_ConvBlock(nn.Module):
         
         if retain_activation:
             # change the requires_thres_grad = True
-            self.block.add_module("LIFNode", LIFNode(threshold=0.3, step=config.step))
+            self.block.add_module("LIFNode", LIFNode(threshold=0.3))
 
         self.block.add_module("MaxPool2d", nn.MaxPool2d(kernel_size=2, stride=2, padding=0))
 

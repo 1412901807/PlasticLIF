@@ -37,32 +37,64 @@ def get_rnn(rnn_type, plastic_mode, rnn_in_size, hidden_size, step):
     if rnn_type == 'RNN' and plastic_mode == 'none':
         print("rnn_type == 'SRNN' and plastic_mode == 'none'")
         rnn = models.SNN_RNNCell(rnn_in_size, hidden_size, step)
-    elif rnn_type == 'LSTM' and plastic_mode == 'none':
-        print("rnn_type == 'SLSTM' and plastic_mode == 'none'")
-        rnn = models.SNN_LSTMCell(rnn_in_size, hidden_size, step)
-    elif rnn_type == 'MLP' and plastic_mode == 'none':
-        print("rnn_type == 'SMLP' and plastic_mode == 'none'")
-        rnn = models.SNN_MLPCell(rnn_in_size, hidden_size, step)
-
     elif rnn_type == 'RNN' and plastic_mode == 'hebbian':
         print("rnn_type == 'SRNN' and plastic_mode == 'hebbian'")
         rnn = models.SNN_HebbianRNNCell(rnn_in_size, hidden_size, step)
-    elif rnn_type == 'LSTM' and plastic_mode == 'hebbian':
-        print("rnn_type == 'SLSTM' and plastic_mode == 'hebbian'")
-        rnn = models.SNN_HebbianLSTMCell(rnn_in_size, hidden_size, step)
-    elif rnn_type == 'MLP' and plastic_mode == 'hebbian':
-        print("rnn_type == 'SMLP' and plastic_mode == 'hebbian'")
-        rnn = models.SNN_HebbianMLPCell(rnn_in_size,hidden_size, step)
-
     elif rnn_type == 'RNN' and plastic_mode == 'stdp':
         print("rnn_type == 'SRNN' and plastic_mode == 'stdp'")
         rnn = models.SNN_STDPRNNCell(rnn_in_size,hidden_size, step)
+
+    elif rnn_type == 'LSTM' and plastic_mode == 'none':
+        print("rnn_type == 'SLSTM' and plastic_mode == 'none'")
+        rnn = models.SNN_LSTMCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LSTM' and plastic_mode == 'hebbian':
+        print("rnn_type == 'SLSTM' and plastic_mode == 'hebbian'")
+        rnn = models.SNN_HebbianLSTMCell(rnn_in_size, hidden_size, step)
     elif rnn_type == 'LSTM' and plastic_mode == 'stdp':
         print("rnn_type == 'SLSTM' and plastic_mode == 'stdp'")
         rnn = models.SNN_STDPLSTMCell(rnn_in_size,hidden_size, step)
+
+    elif rnn_type == 'MLP' and plastic_mode == 'none':
+        print("rnn_type == 'SMLP' and plastic_mode == 'none'")
+        rnn = models.SNN_MLPCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'MLP' and plastic_mode == 'hebbian':
+        print("rnn_type == 'SMLP' and plastic_mode == 'hebbian'")
+        rnn = models.SNN_HebbianMLPCell(rnn_in_size,hidden_size, step)
     elif rnn_type == 'MLP' and plastic_mode == 'stdp':
         print("rnn_type == 'SMLP' and plastic_mode == 'stdp'")
         rnn = models.SNN_STDPMLPCell(rnn_in_size,hidden_size, step)
+
+    elif rnn_type == 'LIF_LSTM' and plastic_mode == 'none':
+        print("rnn_type == 'LIF_LSTM' and plastic_mode == 'none'")
+        rnn = models.LIF_LSTMCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_LSTM' and plastic_mode == 'hebbian':
+        print("rnn_type == 'LIF_LSTM' and plastic_mode == 'hebbian'")
+        rnn = models.LIF_HebbianLSTMCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_LSTM' and plastic_mode == 'stdp':
+        print("rnn_type == 'LIF_LSTM' and plastic_mode == 'stdp'")
+        rnn = models.LIF_STDPLSTMCell(rnn_in_size,hidden_size, step)
+    
+    elif rnn_type == 'LIF_RNN' and plastic_mode == 'none':
+        print("rnn_type == 'LIF_RNN' and plastic_mode == 'none'")
+        rnn = models.LIF_RNNCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_RNN' and plastic_mode == 'hebbian':
+        print("rnn_type == 'LIF_RNN' and plastic_mode == 'hebbian'")
+        rnn = models.LIF_HebbianRNNCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_RNN' and plastic_mode == 'stdp':
+        print("rnn_type == 'LIF_RNN' and plastic_mode == 'stdp'")
+        rnn = models.LIF_STDPRNNCell(rnn_in_size,hidden_size, step)
+    
+    elif rnn_type == 'LIF_MLP' and plastic_mode == 'none':
+        print("rnn_type == 'LIF_MLP' and plastic_mode == 'none'")
+        rnn = models.LIF_MLPCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_MLP' and plastic_mode == 'hebbian':
+        print("rnn_type == 'LIF_MLP' and plastic_mode == 'hebbian'")
+        rnn = models.LIF_HebbianMLPCell(rnn_in_size, hidden_size, step)
+    elif rnn_type == 'LIF_MLP' and plastic_mode == 'stdp':
+        print("rnn_type == 'LIF_MLP' and plastic_mode == 'stdp'")
+        rnn = models.LIF_STDPMLPCell(rnn_in_size,hidden_size, step)
+
+    
 
     else:
         raise NotImplementedError('RNN not implemented')

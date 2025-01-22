@@ -6,6 +6,7 @@ from datetime import datetime
 
 import argparse
 import importlib.util
+import shutil
 import sys
 
 import numpy as np
@@ -18,9 +19,7 @@ from utils.logger import Logger
 from datasets.data_sets import DatasetIters
 from utils.train_utils import grad_clipping, model_init, task_init
 
-# 设置确认
-torch.backends.cudnn.deterministic = True
-torch.backends.cudnn.benchmark = False
+import json
 
 def log_progress(eid, config, logger, scheduler, train_loss, log_pre_time, test_data, net, task_func, logger_func, test_loss_list, test_results_list, best_epoch):
     # 设置列宽
@@ -110,7 +109,18 @@ def model_train(config):
     # initialize network
     net = model_init(config, mode='train')
 
-    # initialize logger
+    # 初始化 logger
+    # 初始化 logger
+    if os.path.exists(config.save_path):
+        overwrite = input(f"The directory '{config.save_path}' already exists. Do you want to overwrite it? (y/n): ")
+        if overwrite.lower() == 'y':
+            # 清理文件夹
+            shutil.rmtree(config.save_path)
+            os.makedirs(config.save_path)
+        else:
+            print("Operation aborted. Exiting program.")
+            exit()
+
     logger = Logger(output_dir=config.save_path)
 
     # gradient clipping
@@ -168,12 +178,10 @@ def model_train(config):
                 eta_min=config.lr / 10,
                 warmup_steps=warmup_steps
             )
+            # print(f"Initial last_epoch: {scheduler.last_epoch}")  # 初始值是0
 
         else:
             raise NotImplementedError('scheduler_type must be specified')
-
-    if isinstance(scheduler, WarmupCosineAnnealingLR):
-         print("lr = {}, warmup".format(config.lr))
 
 
     best_epoch = 0
@@ -205,14 +213,14 @@ def model_train(config):
             optimizer.step()
             train_loss += loss.item()
 
-        if config.use_lr_scheduler:
-            scheduler.step()
-
         if (eid + 1) % config.log_epoch == 0:
             log_pre_time, test_loss_list, test_results_list, best_epoch = log_progress(
                 eid, config, logger, scheduler, train_loss, log_pre_time,
                 test_data, net, task_func, logger, test_loss_list, test_results_list, best_epoch)
             train_loss = 0.0
+
+        if config.use_lr_scheduler:
+            scheduler.step()
 
 
     # 保存最后的模型参数
@@ -253,6 +261,11 @@ def load_config(config_path):
     config_instance = config_module.Config()  # 创建Config类的实例
     return config_instance
 
+def save_config(config, output_path):
+    config_dict = config.__dict__
+    with open(output_path, 'w') as f:
+        json.dump(config_dict, f, indent=4)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train model with a custom config file.")
     parser.add_argument('--config_path', type=str, help="Path to the config.py file.")
@@ -261,6 +274,8 @@ if __name__ == "__main__":
 
     # 加载指定路径的配置文件
     config = load_config(args.config_path)
+    # 保存配置
+    save_config(config, "./config.json")
 
     # 调用model_train函数，并传递配置文件中的内容
     model_train(config)

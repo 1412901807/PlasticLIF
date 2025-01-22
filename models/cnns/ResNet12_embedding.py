@@ -27,7 +27,7 @@ class SNN_BasicBlock(nn.Module):
         super(SNN_BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.LIF = LIFNode(threshold=0.3, step=config.step)
+        self.LIF = LIFNode(threshold=0.3)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = conv3x3(planes, planes)
