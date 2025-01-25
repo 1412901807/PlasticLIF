@@ -5,12 +5,9 @@ class Config(miniImageNetConfig):
         super(Config, self).__init__()
 
         self.cnn = 'ProtoNet'
-        self.rnn = 'LIF_LSTM'
+        self.rnn = 'LIF_RNN'
         self.plasticity_mode = 'none'
         self.save_path = f'./result'
-
-        self.step = 4
-        self.hidden_size = 256
 
         self.batch_size = 8
         self.log_epoch = 10

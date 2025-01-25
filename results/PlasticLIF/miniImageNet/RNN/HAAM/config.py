@@ -9,9 +9,6 @@ class Config(miniImageNetConfig):
         self.plasticity_mode = 'stdp'
         self.save_path = f'./result'
 
-        self.step = 4
-        self.hidden_size = 512
-
         self.batch_size = 8
         self.log_epoch = 10
         self.train_data = 2560000

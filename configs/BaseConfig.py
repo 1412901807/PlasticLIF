@@ -21,7 +21,7 @@ class BaseConfig(object):
         self.model_outsize = 5
         self.modulation = True
         self.p_lr = 0.1
-        self.p_wd = 0.1
+        # self.p_wd = 0.1
         self.inner_grad_clip = 1
         self.layernorm = False
         self.weight_clip = None

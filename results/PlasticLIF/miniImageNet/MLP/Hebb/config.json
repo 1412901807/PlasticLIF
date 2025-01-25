@@ -1,6 +1,6 @@
 {
     "step": 4,
-    "hidden_size": 640,
+    "hidden_size": 384,
     "train_way": 5,
     "train_shot": 1,
     "train_query": 1,
@@ -36,8 +36,8 @@
         84
     ],
     "cnn": "ProtoNet",
-    "rnn": "LIF_RNN",
-    "plasticity_mode": "none",
+    "rnn": "LIF_MLP",
+    "plasticity_mode": "hebbian",
     "save_path": "./result",
     "batch_size": 8,
     "log_epoch": 10,

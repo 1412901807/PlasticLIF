@@ -29,11 +29,11 @@
     "use_lr_scheduler": true,
     "scheduler_type": "CosineAnnealing",
     "model_type": "Plasticmodel",
-    "image_dataset": "miniImageNet",
+    "image_dataset": "Omniglot",
     "input_shape": [
-        3,
-        84,
-        84
+        1,
+        105,
+        105
     ],
     "cnn": "ProtoNet",
     "rnn": "LIF_RNN",

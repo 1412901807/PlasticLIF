@@ -1,6 +1,6 @@
 {
     "step": 4,
-    "hidden_size": 640,
+    "hidden_size": 384,
     "train_way": 5,
     "train_shot": 1,
     "train_query": 1,
@@ -29,15 +29,15 @@
     "use_lr_scheduler": true,
     "scheduler_type": "CosineAnnealing",
     "model_type": "Plasticmodel",
-    "image_dataset": "miniImageNet",
+    "image_dataset": "Omniglot",
     "input_shape": [
-        3,
-        84,
-        84
+        1,
+        105,
+        105
     ],
     "cnn": "ProtoNet",
-    "rnn": "LIF_RNN",
-    "plasticity_mode": "none",
+    "rnn": "LIF_MLP",
+    "plasticity_mode": "hebbian",
     "save_path": "./result",
     "batch_size": 8,
     "log_epoch": 10,

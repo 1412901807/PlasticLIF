@@ -1,6 +1,6 @@
 from configs.BaseConfig import BaseConfig, OmniglotConfig, miniImageNetConfig
 
-class Config(miniImageNetConfig):
+class Config(OmniglotConfig):
     def __init__(self):
         super(Config, self).__init__()
 

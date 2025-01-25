@@ -1,4 +1,6 @@
 {
+    "step": 4,
+    "hidden_size": 384,
     "train_way": 5,
     "train_shot": 1,
     "train_query": 1,
@@ -37,8 +39,6 @@
     "rnn": "LIF_LSTM",
     "plasticity_mode": "none",
     "save_path": "./result",
-    "step": 4,
-    "hidden_size": 256,
     "batch_size": 8,
     "log_epoch": 10,
     "train_data": 2560000,

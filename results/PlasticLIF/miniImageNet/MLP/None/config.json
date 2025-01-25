@@ -36,7 +36,7 @@
         84
     ],
     "cnn": "ProtoNet",
-    "rnn": "LIF_RNN",
+    "rnn": "LIF_MLP",
     "plasticity_mode": "none",
     "save_path": "./result",
     "batch_size": 8,

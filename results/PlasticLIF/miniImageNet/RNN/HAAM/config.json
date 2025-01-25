@@ -1,4 +1,6 @@
 {
+    "step": 4,
+    "hidden_size": 486,
     "train_way": 5,
     "train_shot": 1,
     "train_query": 1,
@@ -34,11 +36,9 @@
         84
     ],
     "cnn": "ProtoNet",
-    "rnn": "LIF_LSTM",
+    "rnn": "LIF_RNN",
     "plasticity_mode": "stdp",
     "save_path": "./result",
-    "step": 4,
-    "hidden_size": 256,
     "batch_size": 8,
     "log_epoch": 10,
     "train_data": 2560000,

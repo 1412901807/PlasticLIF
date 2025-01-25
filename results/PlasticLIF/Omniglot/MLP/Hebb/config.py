@@ -1,11 +1,11 @@
 from configs.BaseConfig import BaseConfig, OmniglotConfig, miniImageNetConfig
 
-class Config(miniImageNetConfig):
+class Config(OmniglotConfig):
     def __init__(self):
         super(Config, self).__init__()
 
         self.cnn = 'ProtoNet'
-        self.rnn = 'LIF_RNN'
+        self.rnn = 'LIF_MLP'
         self.plasticity_mode = 'hebbian'
         self.save_path = f'./result'
 
