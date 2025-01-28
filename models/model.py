@@ -46,6 +46,7 @@ class PlasticLinearmodel(models.PlasticModule):
         self.modulation = config.modulation
                
         self.lr = config.p_lr
+        self.wd = config.p_wd
         self.grad_clip = config.inner_grad_clip
         self.weight_clip = config.weight_clip
         
@@ -86,13 +87,15 @@ class PlasticLinearmodel(models.PlasticModule):
 
             # 创建与 x 的最后一列具有相同形状的张量，并用 self.lr 和 self.wd 的值填充它们。
             lr = torch.full_like(x[:, -1], self.lr)
+            wd = torch.full_like(x[:, -1], self.wd)
 
             if self.modulation:
                 lr = lr * torch.sigmoid(x[:, -1]) * 2
+                wd = wd * torch.sigmoid(x[:, -1]) * 2
 
             # update the plastic weights, if there are any
             if self.dim > 0:
-                floatparam = self.update_floatparam(lr, self.grad_clip, mode=self.plasticity_mode)
+                floatparam = self.update_floatparam(lr, wd, self.grad_clip, mode=self.plasticity_mode)
                 if self.weight_clip is not None:
                     floatparam = torch.clip(floatparam, -self.weight_clip, self.weight_clip)
                 h = torch.cat([floatparam, h], dim=1)

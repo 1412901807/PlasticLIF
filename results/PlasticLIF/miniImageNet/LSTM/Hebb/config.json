@@ -17,7 +17,6 @@
     "model_outsize": 5,
     "modulation": true,
     "p_lr": 0.1,
-    "p_wd": 0.1,
     "inner_grad_clip": 1,
     "layernorm": false,
     "weight_clip": null,

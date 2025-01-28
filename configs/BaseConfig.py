@@ -1,10 +1,7 @@
 class BaseConfig(object):
     def __init__(self):
 
-        # 注意train_data/train_epoch/batch_size 和 test_data/test_epoch/batch_sizes要整除
-        self.step = 4
-        self.hidden_size = 256
-        
+        # 注意train_data/train_epoch/batch_size 和 test_data/test_epoch/batch_sizes要整 
         self.train_way = 5
         self.train_shot = 1
         self.train_query = 1
@@ -21,7 +18,7 @@ class BaseConfig(object):
         self.model_outsize = 5
         self.modulation = True
         self.p_lr = 0.1
-        # self.p_wd = 0.1
+        self.p_wd = 0.1
         self.inner_grad_clip = 1
         self.layernorm = False
         self.weight_clip = None
@@ -33,6 +30,19 @@ class BaseConfig(object):
         self.use_lr_scheduler = True
         self.scheduler_type = 'CosineAnnealing'
         self.model_type = 'Plasticmodel'
+
+        self.step = 4
+        self.hidden_size = 256
+        self.save_path = f'./result'
+
+        self.batch_size = 8
+        self.log_epoch = 10
+        self.train_data = 2560000
+        self.train_epoch = 1000
+        self.train_batch = self.train_data // self.train_epoch // self.batch_size
+        self.test_data = 12800
+        self.test_epoch = 1
+        self.test_batch = self.test_data // self.test_epoch // self.batch_size   
 
 class OmniglotConfig(BaseConfig):
     def __init__(self):
