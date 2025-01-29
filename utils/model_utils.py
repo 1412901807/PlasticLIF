@@ -104,16 +104,13 @@ def get_rnn(rnn_type, plastic_mode, rnn_in_size, hidden_size, step):
 def get_linear(plastic_mode, in_size, out_size, activation='none', fan_in=False):
     
     if plastic_mode == 'none':
-        print("plastic_mode == 'none'")
         layer = nn.Sequential(
             models.Linear(in_size, out_size, fan_in=fan_in),
             models.Activation(activation)
         )
     elif plastic_mode == 'hebbian':
-        print("plastic_mode == 'hebbian'")
         layer = models.HebbLinear(in_size, out_size, fan_in=fan_in, activation=activation)
         
     elif plastic_mode == 'stdp':
-        print("plastic_mode == 'stdp'")
         layer = models.STDPLinear(in_size, out_size, fan_in=fan_in, activation=activation)
     return layer

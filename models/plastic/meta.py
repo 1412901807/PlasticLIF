@@ -70,7 +70,6 @@ class PlasticParam(nn.Module):
 
 	def set_floatparam(self, data: torch.Tensor):
 		self.clear_floatparam()
-		# TODO: 应该要可学习，毕竟之后都会清空
 		self.floatparam = data.view(-1, *self.param.shape)
 		self.floatparam.requires_grad_(True)
 
@@ -104,7 +103,7 @@ class PlasticModule(nn.Module):
 				count += d
 		return count
 
-	def update_floatparam(self, lr, wd, max_norm, mode='hebbian') -> torch.Tensor:
+	def update_floatparam(self, flag, lr, wd, max_norm, mode='hebbian') -> torch.Tensor:
 		params = self.allparams()
 
 		eps = 1e-8
@@ -144,11 +143,21 @@ class PlasticModule(nn.Module):
 		for d in range(2):
 			lrs.append(lrs[-1].unsqueeze(-1))
 			wds.append(wds[-1].unsqueeze(-1))
-
+		
 		new_param_list = []
-		for grad, param in zip(grads, params):
-			new_param = (1 - wds[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
-			new_param_list.append(new_param)
+
+		if flag == "wds":
+			for grad, param in zip(grads, params):
+				new_param = (1 - wds[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
+				new_param_list.append(new_param)
+
+		elif flag == "lrs":
+			for grad, param in zip(grads, params):
+				new_param = (1 - lrs[param.param.dim()]) * param.floatparam + lrs[param.param.dim()] * grad * param.lr
+				new_param_list.append(new_param)
+		else:
+			print("flag需要初始化")
+			exit()
 
 		new_param = torch.cat([param.view(param.shape[0], -1) for param in new_param_list], dim=1)
 		return new_param

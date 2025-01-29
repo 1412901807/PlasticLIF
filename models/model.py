@@ -54,6 +54,9 @@ class PlasticLinearmodel(models.PlasticModule):
         if self.use_layernorm:
             self.layernorm = nn.LayerNorm((self.hidden_size, ))
 
+        self.flag = config.flag
+        print(f"flag: {self.flag}")
+
     def forward(self,input, hidden,**Kwargs):
         
         # 1reset
@@ -95,7 +98,7 @@ class PlasticLinearmodel(models.PlasticModule):
 
             # update the plastic weights, if there are any
             if self.dim > 0:
-                floatparam = self.update_floatparam(lr, wd, self.grad_clip, mode=self.plasticity_mode)
+                floatparam = self.update_floatparam(self.flag, lr, wd, self.grad_clip, mode=self.plasticity_mode)
                 if self.weight_clip is not None:
                     floatparam = torch.clip(floatparam, -self.weight_clip, self.weight_clip)
                 h = torch.cat([floatparam, h], dim=1)
