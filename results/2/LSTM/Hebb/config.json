@@ -1,6 +1,4 @@
 {
-    "step": 4,
-    "hidden_size": 384,
     "train_way": 5,
     "train_shot": 1,
     "train_query": 1,
@@ -17,6 +15,7 @@
     "model_outsize": 5,
     "modulation": true,
     "p_lr": 0.1,
+    "p_wd": 0.1,
     "inner_grad_clip": 1,
     "layernorm": false,
     "weight_clip": null,
@@ -28,15 +27,8 @@
     "use_lr_scheduler": true,
     "scheduler_type": "CosineAnnealing",
     "model_type": "Plasticmodel",
-    "image_dataset": "miniImageNet",
-    "input_shape": [
-        3,
-        84,
-        84
-    ],
-    "cnn": "ProtoNet",
-    "rnn": "LIF_LSTM",
-    "plasticity_mode": "none",
+    "step": 4,
+    "hidden_size": 256,
     "save_path": "./result",
     "batch_size": 8,
     "log_epoch": 10,
@@ -45,5 +37,14 @@
     "train_batch": 320,
     "test_data": 12800,
     "test_epoch": 1,
-    "test_batch": 1600
+    "test_batch": 1600,
+    "image_dataset": "miniImageNet",
+    "input_shape": [
+        3,
+        84,
+        84
+    ],
+    "cnn": "ProtoNet",
+    "rnn": "LIF_LSTM",
+    "plasticity_mode": "hebbian"
 }

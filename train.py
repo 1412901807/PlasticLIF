@@ -284,11 +284,11 @@ def resize_hidden(config):
    
     scale_factors = {
         "LIF_LSTM": {"none": 1.5},
-        "LIF_RNN": {"stdp": 1.9, "hebbian": 1.9, "none": 2.5},
+        "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
         "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
         "LSTM": {"none": 1.5},
-        "RNN": {"stdp": 1.7, "hebbian": 1.7, "none": 2.5},
-        "MLP": {"stdp": 1.7, "hebbian": 1.7, "none": 2.5},
+        "RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
+        "MLP": {"stdp": 2, "hebbian": 2, "none": 2.5},
     }
 
     rnn_type = config.rnn
