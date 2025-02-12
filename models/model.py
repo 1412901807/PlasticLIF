@@ -55,11 +55,9 @@ class PlasticLinearmodel(models.PlasticModule):
             self.layernorm = nn.LayerNorm((self.hidden_size, ))
 
         self.flag = config.flag
-        print(f"flag: {self.flag}")
 
     def forward(self,input, hidden,**Kwargs):
         
-        # 1reset
         self.reset_LIF()
 
         ret = []

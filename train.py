@@ -121,7 +121,14 @@ def model_train(config):
 
     # 打印网络参数总量
     total_params = count_model_params(net)
+    config.total_params = total_params
+
     print(f"网络的总参数量: {total_params}")
+    print(f"flag: {config.flag}")
+    print(f"batch_size: {config.batch_size}")
+
+    # save config
+    save_config(config, "./config.json")
 
     # 初始化 logger
     # 初始化 logger
@@ -192,7 +199,6 @@ def model_train(config):
                 eta_min=config.lr / 10,
                 warmup_steps=warmup_steps
             )
-            # print(f"Initial last_epoch: {scheduler.last_epoch}")  # 初始值是0
 
         else:
             raise NotImplementedError('scheduler_type must be specified')
@@ -222,7 +228,7 @@ def model_train(config):
 
             # gradient clipping
             if config.grad_clip is not None:
-                grad_clipping(net, config.grad_clip) #printing=True
+                grad_clipping(net, config.grad_clip) 
 
             optimizer.step()
             train_loss += loss.item()
@@ -280,23 +286,31 @@ def save_config(config, output_path):
     with open(output_path, 'w') as f:
         json.dump(config_dict, f, indent=4)
 
-def resize_hidden(config):
-   
-    scale_factors = {
-        "LIF_LSTM": {"none": 1.5},
-        "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
-        "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
-        "LSTM": {"none": 1.5},
-        "RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
-        "MLP": {"stdp": 2, "hebbian": 2, "none": 2.5},
-    }
+def compute_config(config):
+    if config.image_dataset == 'miniImageNet':
+        scale_factors = {
+            "LIF_LSTM": {"none": 1.5},
+            "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
+            "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+            "LSTM": {"none": 1.5},
+            "RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
+            "MLP": {"stdp": 2, "hebbian": 2, "none": 2.5},
+        }
+    elif config.image_dataset == 'Omniglot':
+        scale_factors = {
+            "LIF_LSTM": {"none": 1.5},
+            "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
+            "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+        }
 
     rnn_type = config.rnn
     plasticity = config.plasticity_mode
     factor = scale_factors.get(rnn_type, {}).get(plasticity, 1)
 
-    # 更新 hidden_size
+    # 更新config中需要计算修改的部分参数
     config.hidden_size = int(config.hidden_size * factor)
+    config.train_batch = config.train_data // config.train_epoch // config.batch_size
+    config.test_batch = config.test_data // config.test_epoch // config.batch_size   
 
     return config
 
@@ -308,12 +322,7 @@ if __name__ == "__main__":
 
     # 加载指定路径的配置文件
     config = load_config(args.config_path)
-
-    # 调整hidden_size
-    config = resize_hidden(config)
-
-    # 保存配置
-    save_config(config, "./config.json")
+    config = compute_config(config) # bug
 
     # 调用model_train函数，并传递配置文件中的内容
     model_train(config)
