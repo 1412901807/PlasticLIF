@@ -1,0 +1,2 @@
+TestLoss	TestAcc
+0.241590    	88.80     

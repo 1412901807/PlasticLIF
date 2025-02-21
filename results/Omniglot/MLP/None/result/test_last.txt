@@ -1,0 +1,2 @@
+TestLoss	TestAcc
+2.290029    	21.17     
