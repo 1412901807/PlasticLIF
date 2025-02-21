@@ -292,6 +292,7 @@ def compute_config(config):
             "LIF_LSTM": {"none": 1.5},
             "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+            "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LSTM": {"none": 1.5},
             "RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "MLP": {"stdp": 2, "hebbian": 2, "none": 2.5},
@@ -301,6 +302,7 @@ def compute_config(config):
             "LIF_LSTM": {"none": 1.5},
             "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+            "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
         }
 
     rnn_type = config.rnn

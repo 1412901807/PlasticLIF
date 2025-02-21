@@ -8,6 +8,9 @@ __all__ = [
     "LIF_MLPCell",
     "LIF_HebbianMLPCell",
     "LIF_STDPMLPCell",
+    "LIF_RNN2Cell",
+    "LIF_HebbianRNN2Cell",
+    "LIF_STDPRNN2Cell",
 ]
 
 from models.common.PlasticLIF import PlasticLIF
@@ -19,6 +22,57 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from braincog.base.node import *
+
+class LIF_RNN2Cell(nn.Module):
+    def __init__(self, ind, outd, step):
+        super().__init__()
+        self.i_fc = Linear(ind, outd)
+        self.h_fc = Linear(outd, outd)
+        self.LIF = nn.ModuleList(LIFNode(threshold=0.3) for _ in range(2))
+
+    def calc_dw(self, fc, pre, post):
+        pass
+
+    def reset_LIF(self):
+        for lif in self.LIF:
+            lif.n_reset()
+
+    def forward(self, x: torch.Tensor, hx: torch.Tensor):
+        
+        pre1 = self.i_fc(x)
+        post1 = self.LIF[0](pre1)
+        self.calc_dw(self.LIF[0], pre1, post1)
+
+        pre2 = self.h_fc(hx)
+        post2 = self.LIF[1](pre2)
+        self.calc_dw(self.LIF[1], pre2, post2)
+
+        post = post1 + post2
+
+        return post
+    
+class LIF_HebbianRNN2Cell(LIF_RNN2Cell):
+    def __init__(self, ind, outd, step):
+        super().__init__(ind, outd, step)
+        self.LIF = nn.ModuleList(PlasticLIF(threshold=0.3, ind=ind, scale=1) for _ in range(2))
+    
+    def calc_dw(self, fc, pre, post):
+        fc.w.dw = torch.bmm(pre.unsqueeze(-1), post.unsqueeze(-2))
+
+class LIF_STDPRNN2Cell(LIF_HebbianRNN2Cell):
+    
+    def calc_dw(self, fc, pre, post):
+
+        hebb = torch.bmm(pre.unsqueeze(-1), post.unsqueeze(-2))
+
+        if fc.w.dw is None:
+            fc.w.dw = fc.w.decay * hebb
+        else:
+            fc.w.dw = (1 - fc.w.decay) * fc.w.dw + fc.w.decay * hebb
+
+    def reset_stdp(self):
+        for lif in self.LIF:
+            lif.w.dw = None
 
 class LIF_MLPCell(nn.Module):
 
@@ -46,7 +100,6 @@ class LIF_MLPCell(nn.Module):
         self.calc_dw(self.LIF[1], pre2, post2)
 
         return post2
-
 
 class LIF_HebbianMLPCell(LIF_MLPCell):
 
@@ -169,7 +222,6 @@ class LIF_HebbianLSTMCell(LIF_LSTMCell):
 
     def calc_dw(self, fc, pre, post):
         fc.w.dw = torch.bmm(pre.unsqueeze(-1), post.unsqueeze(-2))
-
 
 class LIF_STDPLSTMCell(LIF_HebbianLSTMCell):
 

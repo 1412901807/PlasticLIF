@@ -35,6 +35,7 @@ class FSC:
         task_loss = 0
         
         bsz = img_support.shape[0]
+        # print(f"memory_size: {model.memory_size}")
         hidden = torch.zeros((bsz, model.memory_size), device=DEVICE)
 
         for idx, (img, input, label) in  enumerate(zip(img_support.unbind(1), onehot_support.unbind(1), labels_support.unbind(1))):

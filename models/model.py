@@ -80,7 +80,7 @@ class PlasticLinearmodel(models.PlasticModule):
                     x = self.layernorm(x)
                 h = torch.cat((x, h), dim=1)
                 x = self.out_fc(x)
-            elif self.rnn_type == 'RNN' or self.rnn_type == 'MLP' or self.rnn_type == 'LIF_RNN' or self.rnn_type == 'LIF_MLP':
+            else:
                 h = self.rnn(embedding, hidden[:, self.dim: ])
                 if self.use_layernorm:
                     h = self.layernorm(h)
