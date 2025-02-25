@@ -36,11 +36,11 @@
     "train_epoch": 1000,
     "test_data": 12800,
     "test_epoch": 1,
-    "image_dataset": "miniImageNet",
+    "image_dataset": "Omniglot",
     "input_shape": [
-        3,
-        84,
-        84
+        1,
+        105,
+        105
     ],
     "cnn": "ResNet",
     "rnn": "RNN",
@@ -48,5 +48,5 @@
     "flag": "wds",
     "train_batch": 320,
     "test_batch": 1600,
-    "total_params": 22115841
+    "total_params": 25683841
 }

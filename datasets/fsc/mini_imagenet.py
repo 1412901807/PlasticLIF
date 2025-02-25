@@ -20,7 +20,7 @@ from PIL import Image
 from pdb import set_trace as breakpoint
 
 # Set the appropriate paths of the datasets here.
-_MINI_IMAGENET_DATASET_DIR = '/home/liweiyi/PlasticLIF/datasets/fsc/data/miniImageNet'
+_MINI_IMAGENET_DATASET_DIR = '/mnt/home/liweiyi/PlasticLIF/datasets/fsc/data/miniImageNet'
 # _MINI_IMAGENET_DATASET_DIR = 'data/miniImageNet'
 
 def buildLabelIndex(labels):

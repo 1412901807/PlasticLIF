@@ -1,6 +1,6 @@
 from configs.BaseConfig import BaseConfig, OmniglotConfig, miniImageNetConfig
 
-class Config(miniImageNetConfig):
+class Config(OmniglotConfig):
     def __init__(self):
         super(Config, self).__init__()
 
@@ -8,9 +8,8 @@ class Config(miniImageNetConfig):
 
         self.cnn = 'ResNet'
         self.rnn = 'RNN'
-        self.plasticity_mode = 'stdp' 
+        self.plasticity_mode = 'hebbian' 
 
         self.flag = "wds"
 
         self.num_workers = 0
-

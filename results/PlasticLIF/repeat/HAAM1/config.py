@@ -14,3 +14,5 @@ class Config(OmniglotConfig):
 
         self.seed = 1
 
+        self.num_workers = 0
+
