@@ -11,5 +11,3 @@ class Config(OmniglotConfig):
         self.plasticity_mode = 'stdp' 
 
         self.flag = "wds"
-
-        self.num_workers = 0

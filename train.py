@@ -126,7 +126,8 @@ def model_train(config):
     print(f"网络的总参数量: {total_params}")
     print(f"flag: {config.flag}")
     print(f"batch_size: {config.batch_size}")
-    print(f"seed: {config.seed}")
+    if config.seed != 0:
+        print(f"seed: {config.seed}")
 
     # save config
     save_config(config, "./config.json")

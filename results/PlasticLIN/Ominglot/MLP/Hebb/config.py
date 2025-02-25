@@ -11,5 +11,3 @@ class Config(OmniglotConfig):
         self.plasticity_mode = 'hebbian' 
 
         self.flag = "wds"
-
-        self.num_workers = 0
