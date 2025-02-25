@@ -126,6 +126,7 @@ def model_train(config):
     print(f"网络的总参数量: {total_params}")
     print(f"flag: {config.flag}")
     print(f"batch_size: {config.batch_size}")
+    print(f"seed: {config.seed}")
 
     # save config
     save_config(config, "./config.json")
@@ -294,8 +295,8 @@ def compute_config(config):
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LSTM": {"none": 1.5},
-            "RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
-            "MLP": {"stdp": 2, "hebbian": 2, "none": 2.5},
+            "RNN": {"stdp": 2, "hebbian": 2, "none": 3},
+            "MLP": {"stdp": 2, "hebbian": 2, "none": 3},
         }
     elif config.image_dataset == 'Omniglot':
         scale_factors = {
@@ -303,6 +304,9 @@ def compute_config(config):
             "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
+            "LSTM": {"none": 1.5},
+            "RNN": {"stdp": 2, "hebbian": 2, "none": 3},
+            "MLP": {"stdp": 2, "hebbian": 2, "none": 3},
         }
 
     rnn_type = config.rnn

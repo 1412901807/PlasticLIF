@@ -74,28 +74,56 @@ class SNN_STDPMLPCell(SNN_HebbianMLPCell):
         self.i_fc.w.dw = None
 
 
+# class SNN_RNNCell(nn.Module):
+
+#     def __init__(self, ind, outd, step):
+#         super().__init__()
+#         self.i_fc = Linear(ind, outd)
+#         self.h_fc = Linear(outd, outd)
+#         self.LIF = LIFNode(threshold=0.3)
+
+#     def calc_dw(self, fc, pre, post):
+#         pass
+
+#     def reset_LIF(self):
+#         self.LIF.n_reset()
+
+#     def forward(self, x: torch.Tensor, hx: torch.Tensor):
+
+#         out = self.LIF(self.i_fc(x) + self.h_fc(hx))
+
+#         self.calc_dw(self.i_fc, x, out)
+#         self.calc_dw(self.h_fc, hx, out)
+
+#         return out
+
 class SNN_RNNCell(nn.Module):
 
     def __init__(self, ind, outd, step):
         super().__init__()
         self.i_fc = Linear(ind, outd)
         self.h_fc = Linear(outd, outd)
-        self.LIF = LIFNode(threshold=0.3)
+        self.LIF = nn.ModuleList(LIFNode(threshold=0.3) for _ in range(2))
+        print("RNN2")
 
     def calc_dw(self, fc, pre, post):
         pass
 
     def reset_LIF(self):
-        self.LIF.n_reset()
+        for lif in self.LIF:
+            lif.n_reset()
 
     def forward(self, x: torch.Tensor, hx: torch.Tensor):
+        
+        post1 = self.LIF[0](self.i_fc(x))
+        post2 = self.LIF[1](self.h_fc(hx))
 
-        out = self.LIF(self.i_fc(x) + self.h_fc(hx))
+        self.calc_dw(self.i_fc, x, post1)
+        self.calc_dw(self.h_fc, hx, post2)
 
-        self.calc_dw(self.i_fc, x, out)
-        self.calc_dw(self.h_fc, hx, out)
+        post = post1 + post2
 
-        return out
+        return post
 
 
 class SNN_HebbianRNNCell(SNN_RNNCell):
@@ -121,7 +149,6 @@ class SNN_STDPRNNCell(SNN_HebbianRNNCell):
             fc.w.dw = (1 - fc.w.decay) * fc.w.dw + fc.w.decay * hebb
 
     def reset_stdp(self):
-
         self.h_fc.w.dw = None
         self.i_fc.w.dw = None
 
