@@ -140,13 +140,13 @@ class LIF_RNNCell(nn.Module):
     def reset_LIF(self):
         self.LIF.n_reset()
 
-    def forward(self, x: torch.Tensor, hx: torch.Tensor):
+    # def forward(self, x: torch.Tensor, hx: torch.Tensor):
 
-        pre = self.i_fc(x) + self.h_fc(hx)
-        post = self.LIF(pre)
-        self.calc_dw(self.LIF, pre, post)
+    #     pre = self.i_fc(x) + self.h_fc(hx)
+    #     post = self.LIF(pre)
+    #     self.calc_dw(self.LIF, pre, post)
 
-        return post
+    #     return post
     
 class LIF_HebbianRNNCell(LIF_RNNCell):
     def __init__(self, ind, outd, step):
