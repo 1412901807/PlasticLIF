@@ -6,7 +6,7 @@ class BaseConfig(object):
         self.train_shot = 1
         self.train_query = 1
         self.randomize_train_order = True
-        self.num_workers = 10
+        self.num_workers = 16
         self.lr = 0.001
         self.wdecay = 0.0005
         self.seed = 0

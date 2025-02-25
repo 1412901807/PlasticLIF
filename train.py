@@ -99,15 +99,6 @@ def model_eval(config, net, test_data, task_func, logger=None):
         return avg_testloss, test_acc
 
 
-def count_model_params(model):
-    """
-    计算模型的总参数量
-    :param model: PyTorch 模型实例
-    :return: 模型的总参数量
-    """
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    return total_params
-
 def model_train(config):
     np.random.seed(NP_SEED + config.seed)
     torch.cuda.manual_seed_all(TCHCUDA_SEED + config.seed)
@@ -119,15 +110,14 @@ def model_train(config):
     # initialize network
     net = model_init(config, mode='train')
 
-    # 打印网络参数总量
-    total_params = count_model_params(net)
-    config.total_params = total_params
+    # 打印出可塑性参数的参数量
+    print(f"dim: {net.dim}")
 
-    print(f"网络的总参数量: {total_params}")
     print(f"flag: {config.flag}")
     print(f"batch_size: {config.batch_size}")
     if config.seed != 0:
         print(f"seed: {config.seed}")
+    print(f"num_workers: {config.num_workers}")
 
     # save config
     save_config(config, "./config.json")
@@ -292,7 +282,6 @@ def compute_config(config):
     if config.image_dataset == 'miniImageNet':
         scale_factors = {
             "LIF_LSTM": {"none": 1.5},
-            "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LSTM": {"none": 1.5},
@@ -302,7 +291,6 @@ def compute_config(config):
     elif config.image_dataset == 'Omniglot':
         scale_factors = {
             "LIF_LSTM": {"none": 1.5},
-            "LIF_RNN": {"stdp": 2, "hebbian": 2, "none": 2.5},
             "LIF_MLP": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LIF_RNN2": {"stdp": 1.5, "hebbian": 1.5, "none": 2.5},
             "LSTM": {"none": 1.5},

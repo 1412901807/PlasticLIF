@@ -3,7 +3,7 @@
     "train_shot": 1,
     "train_query": 1,
     "randomize_train_order": true,
-    "num_workers": 0,
+    "num_workers": 16,
     "lr": 0.001,
     "wdecay": 0.0005,
     "seed": 0,
@@ -47,6 +47,5 @@
     "plasticity_mode": "stdp",
     "flag": "wds",
     "train_batch": 160,
-    "test_batch": 800,
-    "total_params": 19671425
+    "test_batch": 800
 }

@@ -12,5 +12,3 @@ class Config(miniImageNetConfig):
 
         self.flag = "wds"
 
-        self.num_workers = 0
-

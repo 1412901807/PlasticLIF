@@ -137,8 +137,8 @@ class LIF_RNNCell(nn.Module):
     def calc_dw(self, fc, pre, post):
         pass
 
-    def reset_LIF(self):
-        self.LIF.n_reset()
+    # def reset_LIF(self):
+    #     self.LIF.n_reset()
 
     # def forward(self, x: torch.Tensor, hx: torch.Tensor):
 

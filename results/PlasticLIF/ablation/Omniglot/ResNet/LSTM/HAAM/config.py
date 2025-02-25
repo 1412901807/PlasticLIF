@@ -12,5 +12,3 @@ class Config(OmniglotConfig):
 
         self.flag = "wds"
 
-        self.num_workers = 0
-
