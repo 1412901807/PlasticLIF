@@ -1,2 +1,2 @@
-CUDA_VISIBLE_DEVICES=2 python3 /home/liweiyi/PlasticLIF/train.py \
+CUDA_VISIBLE_DEVICES=6 python3 /mnt/home/liweiyi/PlasticLIF/train.py \
     --config_path ./config.py

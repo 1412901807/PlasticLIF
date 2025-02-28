@@ -7,7 +7,7 @@ class Config(OmniglotConfig):
         self.batch_size = 8
 
         self.cnn = 'ResNet'
-        self.rnn = 'LIF_LSTM'
+        self.rnn = 'LIF_MLP'
         self.plasticity_mode = 'stdp' 
 
         self.flag = "wds"
