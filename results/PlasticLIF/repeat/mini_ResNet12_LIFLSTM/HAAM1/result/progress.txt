@@ -1,0 +1,2 @@
+Learning Rate	Epoch	BatchNum	DataNum	TrainLoss	TestLoss	TestAcc	Time
+0.00010000     	9         	1440        	23040       	251.956264  	1.720773    	19.12     	2106.221974

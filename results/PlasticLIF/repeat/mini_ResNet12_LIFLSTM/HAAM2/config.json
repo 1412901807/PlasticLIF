@@ -34,7 +34,7 @@
     "log_epoch": 10,
     "train_data": 2560000,
     "train_epoch": 1000,
-    "test_data": 12800,
+    "test_data": 1600,
     "test_epoch": 1,
     "image_dataset": "miniImageNet",
     "input_shape": [
@@ -47,5 +47,5 @@
     "plasticity_mode": "stdp",
     "flag": "wds",
     "train_batch": 160,
-    "test_batch": 800
+    "test_batch": 100
 }
