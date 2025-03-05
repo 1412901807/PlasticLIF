@@ -11,3 +11,5 @@ class Config(OmniglotConfig):
         self.plasticity_mode = 'stdp' 
 
         self.flag = "wds"
+
+        self.lr = self.lr / 10

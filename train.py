@@ -118,6 +118,7 @@ def model_train(config):
     if config.seed != 0:
         print(f"seed: {config.seed}")
     print(f"num_workers: {config.num_workers}")
+    print(f"lr: {config.lr}")
 
     # save config
     save_config(config, "./config.json")

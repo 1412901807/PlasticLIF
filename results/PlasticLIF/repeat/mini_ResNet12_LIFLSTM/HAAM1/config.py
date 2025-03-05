@@ -14,3 +14,5 @@ class Config(miniImageNetConfig):
 
         self.seed = 1
 
+        self.lr = self.lr / 10
+

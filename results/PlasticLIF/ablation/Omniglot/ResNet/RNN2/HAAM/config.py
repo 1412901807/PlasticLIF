@@ -12,3 +12,4 @@ class Config(OmniglotConfig):
 
         self.flag = "wds"
 
+        self.lr = self.lr / 10
