@@ -9,7 +9,3 @@ class Config(OmniglotConfig):
         self.cnn = 'ResNet'
         self.rnn = 'LSTM'
         self.plasticity_mode = 'none' 
-
-        self.flag = "wds"
-
-        self.lr = self.lr / 10

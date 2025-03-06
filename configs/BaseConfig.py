@@ -6,8 +6,8 @@ class BaseConfig(object):
         self.train_shot = 1
         self.train_query = 1
         self.randomize_train_order = True
-        self.num_workers = 16
-        self.lr = 0.001
+        self.num_workers = 8
+        self.lr = 1e-3
         self.wdecay = 0.0005
         self.seed = 0
         self.inner_lr_mode = 'random'
@@ -39,9 +39,10 @@ class BaseConfig(object):
         self.log_epoch = 10
         self.train_data = 2560000
         self.train_epoch = 1000
-        self.test_data = 12800
+        self.test_data = 2560
         self.test_epoch = 1
 
+        self.flag = "wds"
 class OmniglotConfig(BaseConfig):
     def __init__(self):
         super().__init__()

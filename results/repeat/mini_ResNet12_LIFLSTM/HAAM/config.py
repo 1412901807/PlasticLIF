@@ -12,7 +12,3 @@ class Config(miniImageNetConfig):
 
         self.flag = "wds"
 
-        self.seed = 2
-
-        self.lr = self.lr / 10
-

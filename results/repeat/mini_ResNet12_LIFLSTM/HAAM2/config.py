@@ -10,9 +10,5 @@ class Config(miniImageNetConfig):
         self.rnn = 'LIF_LSTM'
         self.plasticity_mode = 'stdp' 
 
-        self.flag = "wds"
-
-        self.seed = 1
-
-        self.lr = self.lr / 10
+        self.seed = 2
 

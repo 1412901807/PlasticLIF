@@ -21,46 +21,6 @@ from utils.train_utils import grad_clipping, model_init, task_init
 
 import json
 
-def log_progress(eid, config, logger, scheduler, train_loss, log_pre_time, test_data, net, task_func, logger_func, test_loss_list, test_results_list, best_epoch):
-    # 设置列宽
-    col_format = {
-        'Learning Rate': '{:<15.8f}',  # 宽度15，保留8位小数
-        'Epoch': '{:<10d}',           # 宽度10，整数
-        'BatchNum': '{:<12d}',        # 宽度12，整数
-        'DataNum': '{:<12d}',         # 宽度12，整数
-        'TrainLoss': '{:<12.6f}',     # 宽度12，保留6位小数
-        'Time': '{:<10.6f}',          # 宽度10，保留6位小数
-    }
-
-    # 日志表头
-    logger.log_tabular('Learning Rate', col_format['Learning Rate'].format(scheduler.get_lr()[0]))
-    logger.log_tabular('Epoch', col_format['Epoch'].format(eid))
-    logger.log_tabular('BatchNum', col_format['BatchNum'].format(eid * config.train_batch))
-    logger.log_tabular('DataNum', col_format['DataNum'].format(eid * config.train_batch * config.batch_size))
-    logger.log_tabular('TrainLoss', col_format['TrainLoss'].format(train_loss / config.log_epoch))
-    
-    # Perform evaluation
-    testloss, testresult = model_eval(config, net, test_data, task_func, logger_func)
-    test_loss_list.append(testloss)
-    test_results_list.append(testresult)
-
-    # Save the best model
-    if testresult == max(test_results_list):
-        torch.save(net.state_dict(), osp.join(config.save_path, 'net_best.pth'))
-        best_epoch = eid  # 更新最佳epoch
-
-    # Compute and log time duration
-    log_post_time = datetime.now()
-    log_duration = (log_post_time - log_pre_time).total_seconds()
-
-    logger.log_tabular('Time', col_format['Time'].format(log_duration))
-
-    # Dump logged values
-    logger.dump_tabular()
-
-    return log_post_time, test_loss_list, test_results_list, best_epoch
-
-
 def model_eval(config, net, test_data, task_func, logger=None):
     col_format = {
         'TestLoss': '{:<12.6f}',      # 宽度12，保留6位小数
@@ -98,6 +58,42 @@ def model_eval(config, net, test_data, task_func, logger=None):
 
         return avg_testloss, test_acc
 
+def log_progress(eid, config, logger, scheduler, train_loss, log_pre_time, test_data, net, task_func, logger_func, test_loss_list, test_acc_list):
+    # 设置列宽
+    col_format = {
+        'Learning Rate': '{:<15.8f}',  # 宽度15，保留8位小数
+        'Epoch': '{:<10d}',           # 宽度10，整数
+        'BatchNum': '{:<12d}',        # 宽度12，整数
+        'DataNum': '{:<12d}',         # 宽度12，整数
+        'TrainLoss': '{:<12.6f}',     # 宽度12，保留6位小数
+        'Time': '{:<10.6f}',          # 宽度10，保留6位小数
+    }
+
+    # 日志表头
+    logger.log_tabular('Learning Rate', col_format['Learning Rate'].format(scheduler.get_last_lr()[0]))
+    logger.log_tabular('Epoch', col_format['Epoch'].format(eid))
+    logger.log_tabular('BatchNum', col_format['BatchNum'].format(eid * config.train_batch))
+    logger.log_tabular('DataNum', col_format['DataNum'].format(eid * config.train_batch * config.batch_size))
+    logger.log_tabular('TrainLoss', col_format['TrainLoss'].format(train_loss / config.log_epoch))
+    
+    testloss, testacc = model_eval(config, net, test_data, task_func, logger_func)  # 变量名更明确
+    test_loss_list.append(testloss)
+    test_acc_list.append(testacc)  # 存储准确率
+
+    # Save the best model
+    if testacc == max(test_acc_list):
+        torch.save(net.state_dict(), osp.join(config.save_path, 'net_best.pth'))
+
+    # Compute and log time duration
+    log_post_time = datetime.now()
+    log_duration = (log_post_time - log_pre_time).total_seconds()
+
+    logger.log_tabular('Time', col_format['Time'].format(log_duration))
+
+    # Dump logged values
+    logger.dump_tabular()
+
+    return log_post_time, test_loss_list, test_acc_list
 
 def model_train(config):
     np.random.seed(NP_SEED + config.seed)
@@ -158,22 +154,6 @@ def model_train(config):
                                     momentum=0.9, weight_decay=config.wdecay)
     else:
         raise NotImplementedError('optimizer not implemented')
-
-    class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
-        def __init__(self, optimizer, T_max, eta_min=0, warmup_steps=0, last_epoch=-1):
-            self.T_max = T_max
-            self.eta_min = eta_min
-            self.warmup_steps = warmup_steps
-            super(WarmupCosineAnnealingLR, self).__init__(optimizer, last_epoch)
-
-        def get_lr(self):
-            if self.last_epoch < self.warmup_steps:
-                return [base_lr * (self.last_epoch + 1) / self.warmup_steps for base_lr in self.base_lrs]
-            else:
-                cosine_step = self.last_epoch - self.warmup_steps + 1
-                cosine_total = self.T_max - self.warmup_steps
-                return [self.eta_min + (base_lr - self.eta_min) * (1 + math.cos(math.pi * cosine_step / cosine_total)) / 2 
-                        for base_lr in self.base_lrs]
         
     # initialize Learning rate scheduler
     if config.use_lr_scheduler:
@@ -181,25 +161,19 @@ def model_train(config):
             scheduler = lrs.ExponentialLR(optimizer, gamma=0.99)
         elif config.scheduler_type == 'StepLR':
             scheduler = lrs.StepLR(optimizer, 10, gamma=0.1)
+
         elif config.scheduler_type == 'CosineAnnealing':
-            
-            total_steps = config.train_epoch
-            warmup_steps = total_steps // 10
-
-            scheduler = WarmupCosineAnnealingLR(
-                optimizer, 
-                T_max=total_steps,
-                eta_min=config.lr / 10,
-                warmup_steps=warmup_steps
-            )
-
+            scheduler = lrs.CosineAnnealingLR(
+            optimizer,
+            T_max=config.train_epoch,  
+            eta_min=config.lr/10
+        )
         else:
             raise NotImplementedError('scheduler_type must be specified')
 
 
-    best_epoch = 0
     test_loss_list = []
-    test_results_list = []
+    test_acc_list = []
     train_loss = 0.0
     log_pre_time = datetime.now()
 
@@ -227,9 +201,9 @@ def model_train(config):
             train_loss += loss.item()
 
         if (eid + 1) % config.log_epoch == 0:
-            log_pre_time, test_loss_list, test_results_list, best_epoch = log_progress(
+            log_pre_time, test_loss_list, test_acc_list = log_progress(
                 eid, config, logger, scheduler, train_loss, log_pre_time,
-                test_data, net, task_func, logger, test_loss_list, test_results_list, best_epoch)
+                test_data, net, task_func, logger, test_loss_list, test_acc_list,)
             train_loss = 0.0
 
         if config.use_lr_scheduler:
@@ -245,10 +219,6 @@ def model_train(config):
     best_model_path = osp.join(config.save_path, 'net_best.pth')
     net.load_state_dict(torch.load(best_model_path))
     run_test(config, net, task_func, 'test_best.txt')
-    # 构建新的文件名，包含 best_ib
-    new_model_path = osp.join(config.save_path, f'net_best_{best_epoch}.pth')
-    # 重命名文件
-    os.rename(best_model_path, new_model_path)
 
 def run_test(config, net, task_func, filename='test_last.txt'):
     np.random.seed(NP_SEED)

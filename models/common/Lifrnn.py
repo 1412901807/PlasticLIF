@@ -110,7 +110,6 @@ class LIF_HebbianMLPCell(LIF_MLPCell):
     def calc_dw(self, fc, pre, post):
         fc.w.dw = torch.bmm(pre.unsqueeze(-1), post.unsqueeze(-2))
 
-
 class LIF_STDPMLPCell(LIF_HebbianMLPCell):
 
     def calc_dw(self, fc, pre, post):

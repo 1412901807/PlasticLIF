@@ -10,7 +10,3 @@ class Config(miniImageNetConfig):
         self.rnn = 'LIF_MLP'
         self.plasticity_mode = 'stdp' 
 
-        self.flag = "wds"
-
-        self.lr = self.lr / 10
-
