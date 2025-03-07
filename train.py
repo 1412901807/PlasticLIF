@@ -51,7 +51,7 @@ def model_eval(config, net, test_data, task_func, logger=None):
 
         test_acc = 100 * correct / total
         # 计算每个batch的平均loss
-        avg_testloss = test_loss / config.test_batch
+        avg_testloss = test_loss / test_len
 
         logger.log_tabular('TestLoss', col_format['TestLoss'].format(avg_testloss))
         logger.log_tabular('TestAcc', col_format['TestAcc'].format(test_acc))
@@ -165,8 +165,8 @@ def model_train(config):
         elif config.scheduler_type == 'CosineAnnealing':
             scheduler = lrs.CosineAnnealingLR(
             optimizer,
-            T_max=config.train_epoch,  
-            eta_min=config.lr/10
+            T_max=config.train_epoch // 2, # 每50个epoch一个周期
+            eta_min=config.lr / 10
         )
         else:
             raise NotImplementedError('scheduler_type must be specified')
