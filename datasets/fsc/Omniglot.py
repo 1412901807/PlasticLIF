@@ -50,6 +50,31 @@ def load_data(file):
         return data
 
 class Omniglot(data.Dataset):
+        # 在MiniImageNet类中添加以下方法（放在class内部）
+    def save_image_grid(self, save_path="Omniglot.pdf"):
+        import matplotlib.pyplot as plt
+        from torchvision.utils import make_grid
+        
+        # 随机选择16张图片
+        indices = random.sample(range(len(self.data)), 16)
+        images = [Image.fromarray(img) for img in self.data[indices]]  # 假设data存储的是numpy数组
+        
+        # 转换为张量并创建网格
+        transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
+        tensor_images = [transform(img) for img in images]
+        grid = make_grid(tensor_images, nrow=4, padding=2, normalize=True)
+        
+        # 创建画布并保存为PDF
+        plt.figure(figsize=(8, 8))
+        plt.imshow(grid.numpy().transpose((1, 2, 0)))
+        plt.axis('off')
+        plt.tight_layout()
+        plt.savefig(save_path, format='pdf', bbox_inches='tight')
+        plt.close()
+        print(f"Saved image grid to {save_path}")
+
     def __init__(self, phase='train', do_not_use_random_transf=False):
 
         assert(phase=='train' or phase=='val' or phase=='test')
@@ -80,15 +105,14 @@ class Omniglot(data.Dataset):
             self.data = data_train['data']
             self.labels = data_train['labels']
 
-            #for i in range(100):
-            #    if i in self.labels:
-            #        print(i)
-
             self.label2ind = buildLabelIndex(self.labels)
             self.labelIds = sorted(self.label2ind.keys())
             self.num_cats = len(self.labelIds)
             self.labelIds_base = self.labelIds
             self.num_cats_base = len(self.labelIds_base)
+
+            # self.save_image_grid()
+            # exit()
 
         elif self.phase=='val' or self.phase=='test':
             if self.phase=='test':

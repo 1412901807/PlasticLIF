@@ -36,10 +36,10 @@ class BaseConfig(object):
         self.save_path = f'./result'
 
         self.batch_size = 8
-        self.log_epoch = 1
+        self.log_epoch = 10
         self.train_data = 2560000
-        self.train_epoch = 100
-        self.test_data = 2560
+        self.train_epoch = 1000
+        self.test_data = 1280
         self.test_epoch = 1
 
         self.flag = "wds"

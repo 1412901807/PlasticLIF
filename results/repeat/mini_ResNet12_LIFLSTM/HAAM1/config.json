@@ -4,7 +4,7 @@
     "train_query": 1,
     "randomize_train_order": true,
     "num_workers": 8,
-    "lr": 0.001,
+    "lr": 0.1,
     "wdecay": 0.0005,
     "seed": 1,
     "inner_lr_mode": "random",
@@ -31,10 +31,10 @@
     "hidden_size": 256,
     "save_path": "./result",
     "batch_size": 16,
-    "log_epoch": 1,
+    "log_epoch": 10,
     "train_data": 2560000,
-    "train_epoch": 100,
-    "test_data": 2560,
+    "train_epoch": 1000,
+    "test_data": 1280,
     "test_epoch": 1,
     "flag": "wds",
     "image_dataset": "miniImageNet",
@@ -46,6 +46,6 @@
     "cnn": "ResNet",
     "rnn": "LIF_LSTM",
     "plasticity_mode": "stdp",
-    "train_batch": 1600,
-    "test_batch": 160
+    "train_batch": 160,
+    "test_batch": 80
 }

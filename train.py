@@ -154,7 +154,23 @@ def model_train(config):
                                     momentum=0.9, weight_decay=config.wdecay)
     else:
         raise NotImplementedError('optimizer not implemented')
-        
+    
+    class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
+        def __init__(self, optimizer, T_max, eta_min=0, warmup_steps=0, last_epoch=-1):
+            self.T_max = T_max
+            self.eta_min = eta_min
+            self.warmup_steps = warmup_steps
+            super(WarmupCosineAnnealingLR, self).__init__(optimizer, last_epoch)
+
+        def get_lr(self):
+            if self.last_epoch < self.warmup_steps:
+                return [base_lr * (self.last_epoch + 1) / self.warmup_steps for base_lr in self.base_lrs]
+            else:
+                cosine_step = self.last_epoch - self.warmup_steps + 1
+                cosine_total = self.T_max - self.warmup_steps
+                return [self.eta_min + (base_lr - self.eta_min) * (1 + math.cos(math.pi * cosine_step / cosine_total)) / 2 
+                        for base_lr in self.base_lrs]
+    
     # initialize Learning rate scheduler
     if config.use_lr_scheduler:
         if config.scheduler_type == 'ExponentialLR':
@@ -163,11 +179,16 @@ def model_train(config):
             scheduler = lrs.StepLR(optimizer, 10, gamma=0.1)
 
         elif config.scheduler_type == 'CosineAnnealing':
-            scheduler = lrs.CosineAnnealingLR(
-            optimizer,
-            T_max=config.train_epoch // 2, # 每50个epoch一个周期
-            eta_min=config.lr / 10
-        )
+            total_steps = config.train_epoch
+            warmup_steps = total_steps // 10
+
+            scheduler = WarmupCosineAnnealingLR(
+                optimizer, 
+                T_max=total_steps,
+                eta_min=config.lr / 10,
+                warmup_steps=warmup_steps
+            )
+
         else:
             raise NotImplementedError('scheduler_type must be specified')
 
