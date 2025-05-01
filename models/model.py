@@ -8,6 +8,22 @@ from models.plastic.meta import PlasticParam
 from utils.model_utils import get_cnn, get_rnn, get_linear
 import models
 
+
+def rate_based_encoding(img_input):
+
+    min_val = img_input.min()
+    max_val = img_input.max()
+    
+    # 生成自适应随机阈值（与输入同设备同类型）
+    random_threshold = torch.rand_like(img_input) * (max_val - min_val) + min_val
+    
+    # 创建掩码并执行编码（保留梯度信息）
+    mask = img_input > random_threshold
+    encoded = img_input * mask.to(img_input.dtype)
+    
+    return encoded
+
+
 class PlasticLinearmodel(models.PlasticModule):
 
     def __init__(self, config, custom_input=False):
@@ -69,6 +85,8 @@ class PlasticLinearmodel(models.PlasticModule):
 
             img_input, extra_input = input
             #
+            # # 进行频率编码
+            # img_input = rate_based_encoding(img_input)
 
             tmp = self.cnn(img_input)
             embedding = self.proj(tmp)
